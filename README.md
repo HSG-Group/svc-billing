@@ -1,3 +1,62 @@
+billing-svc/
+├── src/
+│   ├── domain/                              # Framework-agnostic core — no Nest/ORM imports
+│   │   ├── subscription/
+│   │   │   ├── subscription.entity.ts       # Subscription aggregate root + invariants
+│   │   │   └── subscription.events.ts       # Domain events (Created/Activated/Cancelled/PlanChanged)
+│   │   ├── invoice/
+│   │   │   ├── invoice.entity.ts            # Invoice entity
+│   │   │   └── invoice.events.ts            # Domain events (Issued/Paid/PaymentFailed)
+│   │   ├── value-objects/
+│   │   │   ├── money.vo.ts                  # Currency-safe amount (minor units)
+│   │   │   └── plan.vo.ts                   # Pricing plan (price, interval, trial)
+│   │   └── repositories/                    # Port interfaces (no implementation)
+│   │       ├── subscription.repository.interface.ts
+│   │       └── invoice.repository.interface.ts
+│   │
+│   ├── application/                         # Use cases & orchestration
+│   │   ├── subscription/
+│   │   │   ├── commands/
+│   │   │   │   ├── create-subscription.command.ts
+│   │   │   │   └── create-subscription.handler.ts   # @CommandHandler, depends only on ports
+│   │   │   └── subscription.controller.ts   # HTTP entry point → CommandBus
+│   │   ├── dtos/
+│   │   │   └── create-subscription.dto.ts   # class-validator request shape
+│   │   └── ports/
+│   │       └── payment-gateway.interface.ts # Port any payment provider must implement
+│   │
+│   ├── infrastructure/                      # Adapters & external integrations
+│   │   ├── stripe/
+│   │   │   ├── stripe.service.ts            # Implements PaymentGatewayInterface
+│   │   │   └── stripe-webhook.controller.ts # Verifies signature, republishes domain events
+│   │   └── persistence/
+│   │       └── repositories/
+│   │           └── subscription.repository.ts  # Implements SubscriptionRepositoryInterface
+│   │
+│   ├── modules/                             # NestJS feature modules (DI wiring)
+│   │   ├── health.controller.ts             # GET /health, GET /
+│   │   ├── subscription.module.ts           # Binds SUBSCRIPTION_REPOSITORY → adapter
+│   │   └── stripe.module.ts                 # Binds PAYMENT_GATEWAY → StripeService
+│   │
+│   ├── app.module.ts                        # Root module
+│   └── main.ts                              # Bootstrap (rawBody: true, ValidationPipe)
+│
+├── test/
+│   └── jest-e2e.json
+│
+├── .dockerignore
+├── .env.example
+├── .prettierrc
+├── Dockerfile                               # Bun for install/build, Node for runtime
+├── README.md
+├── bun.lock
+├── eslint.config.mjs
+├── nest-cli.json
+├── package.json
+├── tsconfig.build.json
+└── tsconfig.json
+
+
 <p align="center">
   <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
 </p>
