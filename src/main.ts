@@ -2,10 +2,15 @@ import { NestFactory } from '@nestjs/core';
 import { ValidationPipe } from '@nestjs/common';
 
 import { AppModule } from './app.module';
+import { FastifyAdapter, NestFastifyApplication } from '@nestjs/platform-fastify';
 
 async function bootstrap() {
   // rawBody: true is required so the Stripe webhook controller can verify signatures.
-  const app = await NestFactory.create(AppModule, { rawBody: true });
+  const app = await NestFactory.create<NestFastifyApplication>(
+    AppModule,
+    new FastifyAdapter(),
+    { rawBody: true },
+  );
 
   app.useGlobalPipes(
     new ValidationPipe({
