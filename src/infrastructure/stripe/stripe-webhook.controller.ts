@@ -2,7 +2,7 @@ import { BadRequestException, Controller, Headers, Logger, Post, Req } from '@ne
 import type { RawBodyRequest } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { EventBus } from '@nestjs/cqrs';
-import type { Request } from 'express';
+import type { FastifyRequest } from 'fastify';
 import Stripe from 'stripe';
 
 import { StripeService } from './stripe.service';
@@ -26,7 +26,7 @@ export class StripeWebhookController {
   ) {}
 
   @Post()
-  async handleWebhook(@Req() req: RawBodyRequest<Request>, @Headers('stripe-signature') signature: string) {
+  async handleWebhook(@Req() req: RawBodyRequest<FastifyRequest>, @Headers('stripe-signature') signature: string) {
     const webhookSecret = this.configService.get<string>('STRIPE_WEBHOOK_SECRET');
     if (!signature || !webhookSecret || !req.rawBody) {
       throw new BadRequestException('Missing Stripe signature, webhook secret, or raw body');
