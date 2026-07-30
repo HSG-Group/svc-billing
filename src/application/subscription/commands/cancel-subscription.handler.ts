@@ -5,7 +5,7 @@ import type { SubscriptionRepositoryInterface } from 'src/domain/repositories/su
 import { CancelSubscriptionCommand } from './cancel-subscription.command';
 
 @CommandHandler(CancelSubscriptionCommand)
-export class CancelSubscriptionCommandHandler implements ICommandHandler<CancelSubscriptionCommand> {
+export class CancelSubscriptionHandler implements ICommandHandler<CancelSubscriptionCommand> {
   constructor(
     @Inject(SUBSCRIPTION_REPOSITORY)
     private readonly subscriptionRepository: SubscriptionRepositoryInterface,
