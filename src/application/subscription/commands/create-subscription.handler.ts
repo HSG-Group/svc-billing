@@ -20,7 +20,10 @@ const PLAN_CATALOG: Record<string, (interval: BillingInterval) => Plan> = {
     Plan.create({
       id: `starter-${interval}`,
       name: 'Starter',
-      price: Money.fromDecimal(interval === BillingInterval.YEARLY ? 190 : 19, 'USD'),
+      price: Money.fromDecimal(
+        interval === BillingInterval.YEARLY ? 190 : 19,
+        'USD',
+      ),
       interval,
       trialPeriodDays: 14,
     }),
@@ -28,7 +31,10 @@ const PLAN_CATALOG: Record<string, (interval: BillingInterval) => Plan> = {
     Plan.create({
       id: `pro-${interval}`,
       name: 'Pro',
-      price: Money.fromDecimal(interval === BillingInterval.YEARLY ? 990 : 99, 'USD'),
+      price: Money.fromDecimal(
+        interval === BillingInterval.YEARLY ? 990 : 99,
+        'USD',
+      ),
       interval,
     }),
 };
@@ -43,17 +49,25 @@ export class CreateSubscriptionHandler implements ICommandHandler<CreateSubscrip
     private readonly eventBus: EventBus,
   ) {}
 
-  async execute(command: CreateSubscriptionCommand): Promise<{ subscriptionId: string }> {
+  async execute(
+    command: CreateSubscriptionCommand,
+  ): Promise<{ subscriptionId: string }> {
     const planFactory = PLAN_CATALOG[command.planId];
     if (!planFactory) {
       throw new NotFoundException(`Unknown plan: ${command.planId}`);
     }
-    const interval = command.interval === 'yearly' ? BillingInterval.YEARLY : BillingInterval.MONTHLY;
+    const interval =
+      command.interval === 'yearly'
+        ? BillingInterval.YEARLY
+        : BillingInterval.MONTHLY;
     const plan = planFactory(interval);
 
     // Attach the payment method with the external payment provider first,
     // so we never persist a subscription we can't actually bill.
-    await this.paymentGateway.attachPaymentMethod(command.customerId, command.paymentMethodId);
+    await this.paymentGateway.attachPaymentMethod(
+      command.customerId,
+      command.paymentMethodId,
+    );
 
     const subscription = Subscription.create({
       id: randomUUID(),

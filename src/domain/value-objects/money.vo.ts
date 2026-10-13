@@ -8,7 +8,9 @@ export class Money {
 
   private constructor(amountMinorUnits: number, currency: string) {
     if (!Number.isInteger(amountMinorUnits)) {
-      throw new Error('Money amount must be an integer number of minor units (e.g. cents)');
+      throw new Error(
+        'Money amount must be an integer number of minor units (e.g. cents)',
+      );
     }
     if (amountMinorUnits < 0) {
       throw new Error('Money amount cannot be negative');
@@ -47,16 +49,25 @@ export class Money {
 
   add(other: Money): Money {
     this.assertSameCurrency(other);
-    return new Money(this.amountMinorUnits + other.amountMinorUnits, this.currency);
+    return new Money(
+      this.amountMinorUnits + other.amountMinorUnits,
+      this.currency,
+    );
   }
 
   subtract(other: Money): Money {
     this.assertSameCurrency(other);
-    return new Money(this.amountMinorUnits - other.amountMinorUnits, this.currency);
+    return new Money(
+      this.amountMinorUnits - other.amountMinorUnits,
+      this.currency,
+    );
   }
 
   equals(other: Money): boolean {
-    return this.amountMinorUnits === other.amountMinorUnits && this.currency === other.currency;
+    return (
+      this.amountMinorUnits === other.amountMinorUnits &&
+      this.currency === other.currency
+    );
   }
 
   isGreaterThan(other: Money): boolean {
@@ -70,7 +81,9 @@ export class Money {
 
   private assertSameCurrency(other: Money): void {
     if (this.currency !== other.currency) {
-      throw new Error(`Currency mismatch: ${this.currency} vs ${other.currency}`);
+      throw new Error(
+        `Currency mismatch: ${this.currency} vs ${other.currency}`,
+      );
     }
   }
 }

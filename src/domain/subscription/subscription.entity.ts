@@ -50,9 +50,15 @@ export class Subscription {
   }
 
   /** Factory used when creating a brand-new subscription. */
-  static create(params: { id: string; customerId: string; plan: Plan }): Subscription {
+  static create(params: {
+    id: string;
+    customerId: string;
+    plan: Plan;
+  }): Subscription {
     const now = new Date();
-    const status = params.plan.hasTrial() ? SubscriptionStatus.TRIALING : SubscriptionStatus.ACTIVE;
+    const status = params.plan.hasTrial()
+      ? SubscriptionStatus.TRIALING
+      : SubscriptionStatus.ACTIVE;
     const currentPeriodEnd = Subscription.computePeriodEnd(now, params.plan);
 
     const subscription = new Subscription({
@@ -65,10 +71,18 @@ export class Subscription {
       createdAt: now,
     });
 
-    subscription.record(new SubscriptionCreatedEvent(params.id, params.customerId, params.plan.id));
+    subscription.record(
+      new SubscriptionCreatedEvent(
+        params.id,
+        params.customerId,
+        params.plan.id,
+      ),
+    );
 
     if (status === SubscriptionStatus.ACTIVE) {
-      subscription.record(new SubscriptionActivatedEvent(params.id, currentPeriodEnd));
+      subscription.record(
+        new SubscriptionActivatedEvent(params.id, currentPeriodEnd),
+      );
     }
 
     return subscription;
@@ -84,7 +98,9 @@ export class Subscription {
       throw new Error('Cannot activate a cancelled subscription');
     }
     this._status = SubscriptionStatus.ACTIVE;
-    this.record(new SubscriptionActivatedEvent(this._id, this._currentPeriodEnd));
+    this.record(
+      new SubscriptionActivatedEvent(this._id, this._currentPeriodEnd),
+    );
   }
 
   markPastDue(): void {
@@ -100,7 +116,9 @@ export class Subscription {
     }
     const previousPlanId = this._plan.id;
     this._plan = newPlan;
-    this.record(new SubscriptionPlanChangedEvent(this._id, previousPlanId, newPlan.id));
+    this.record(
+      new SubscriptionPlanChangedEvent(this._id, previousPlanId, newPlan.id),
+    );
   }
 
   cancel(reason?: string): void {
@@ -113,11 +131,17 @@ export class Subscription {
   }
 
   renewPeriod(): void {
-    this._currentPeriodEnd = Subscription.computePeriodEnd(this._currentPeriodEnd, this._plan);
+    this._currentPeriodEnd = Subscription.computePeriodEnd(
+      this._currentPeriodEnd,
+      this._plan,
+    );
   }
 
   isActive(): boolean {
-    return this._status === SubscriptionStatus.ACTIVE || this._status === SubscriptionStatus.TRIALING;
+    return (
+      this._status === SubscriptionStatus.ACTIVE ||
+      this._status === SubscriptionStatus.TRIALING
+    );
   }
 
   private static computePeriodEnd(from: Date, plan: Plan): Date {
