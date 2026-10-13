@@ -1,21 +1,11 @@
 import { Module } from '@nestjs/common';
 import { CqrsModule } from '@nestjs/cqrs';
-import { INVOICE_REPOSITORY } from 'src/domain/repositories/invoice.repository.interface';
-import { InvoiceRepository } from 'src/infrastructure/persistence/repositories/invoice.repository';
-import { InvoicePaidEventHandler } from 'src/application/invoice/events/invoice-paid.handler';
-import { InvoicePaymentFailedEventHandler } from 'src/application/invoice/events/invoice-payment-failed.handler';
-import { SubscriptionModule } from './subscription.module';
 
+import { InvoicePaidEventHandler } from '../application/invoice/events/invoice-paid.handler';
+import { InvoicePaymentFailedEventHandler } from '../application/invoice/events/invoice-payment-failed.handler';
+import { PersistenceModule } from '../infrastructure/persistence/persistence.module';
 @Module({
-  imports: [CqrsModule, SubscriptionModule],
-  providers: [
-    InvoicePaidEventHandler,
-    InvoicePaymentFailedEventHandler,
-    {
-      provide: INVOICE_REPOSITORY,
-      useClass: InvoiceRepository,
-    },
-  ],
-  exports: [INVOICE_REPOSITORY],
+  imports: [CqrsModule, PersistenceModule],
+  providers: [InvoicePaidEventHandler, InvoicePaymentFailedEventHandler],
 })
 export class InvoiceModule {}

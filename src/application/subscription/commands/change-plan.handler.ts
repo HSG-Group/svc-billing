@@ -1,11 +1,11 @@
 import { Inject, NotFoundException } from '@nestjs/common';
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
-import { BillingInterval, Plan } from 'src/domain/value-objects/plan.vo';
-import { Money } from 'src/domain/value-objects/money.vo';
+import { BillingInterval, Plan } from '../../../domain/value-objects/plan.vo';
+import { Money } from '../../../domain/value-objects/money.vo';
 import {
   SUBSCRIPTION_REPOSITORY,
   type SubscriptionRepositoryInterface,
-} from 'src/domain/repositories/subscription.repository.interface';
+} from '../../../domain/repositories/subscription.repository.interface';
 import { ChangePlanCommand } from './change-plan.command';
 
 const PLAN_CATALOG: Record<string, (interval: BillingInterval) => Plan> = {

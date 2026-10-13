@@ -1,7 +1,7 @@
 import { Inject, NotFoundException } from '@nestjs/common';
 import { CommandHandler, EventBus, ICommandHandler } from '@nestjs/cqrs';
-import { SUBSCRIPTION_REPOSITORY } from 'src/domain/repositories/subscription.repository.interface';
-import type { SubscriptionRepositoryInterface } from 'src/domain/repositories/subscription.repository.interface';
+import { SUBSCRIPTION_REPOSITORY } from '../../../domain/repositories/subscription.repository.interface';
+import type { SubscriptionRepositoryInterface } from '../../../domain/repositories/subscription.repository.interface';
 import { CancelSubscriptionCommand } from './cancel-subscription.command';
 
 @CommandHandler(CancelSubscriptionCommand)

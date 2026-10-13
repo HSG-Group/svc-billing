@@ -14,18 +14,20 @@ export class SubscriptionRepository implements SubscriptionRepositoryInterface {
   private readonly store = new Map<string, Subscription>();
 
   async findById(id: string): Promise<Subscription | null> {
-    return this.store.get(id) ?? null;
+    return await Promise.resolve(this.store.get(id) ?? null);
   }
 
   async findByCustomerId(customerId: string): Promise<Subscription[]> {
-    return [...this.store.values()].filter((s) => s.customerId === customerId);
+    return await Promise.resolve(
+      [...this.store.values()].filter((s) => s.customerId === customerId),
+    );
   }
 
   async save(subscription: Subscription): Promise<void> {
-    this.store.set(subscription.id, subscription);
+    await Promise.resolve(this.store.set(subscription.id, subscription));
   }
 
   async delete(id: string): Promise<void> {
-    this.store.delete(id);
+    await Promise.resolve(this.store.delete(id));
   }
 }
